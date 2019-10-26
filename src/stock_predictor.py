@@ -52,7 +52,6 @@ def forecast(quandl_code, n_days):
     
     #set x_forecast equal to last 30 rows of the OG data set from adj. close column
     x_forecast = np.array(new_data.drop(['Prediction'], 1))[-forecast_out:]
-    #print(x_forecast)
 
     svm(x_train, y_train, x_test, y_test, x_forecast)
     lr(x_train, y_train, x_test, y_test, x_forecast)
@@ -91,15 +90,27 @@ def lr(x_train, y_train, x_test, y_test, x_forecast):
     print(lr_prediction)
 
 def main():
-    print("Welcome")
+    print("Welcome to Top Tech Stock Predictor")
 
-    codes = ["WIKI/AMZN", "WIKI/GOOGL"]
+    companies = ["Amazon", "Google", "Apple", "Microsoft", "Facebook"]
+    codes = ["WIKI/AMZN", "WIKI/GOOGL", "WIKI/AAPL", "WIKI/MSFT", "WIKI/FB"]
 
-    print("0: Amazon")
-    print("1: Google")
-    index = int(input("Please choose a company via number from the above list:" ))
-    
-    forecast(codes[index], 30)
+    cont = True
+
+    while(cont):
+        print("")
+        
+        ind = 0
+        for company in companies:
+            print(str(ind) + ": " + company)
+            ind += 1
+            
+        print("")
+        index = int(input("Please choose a company via number from the above list:" ))
+        print("")
+        print(companies[index] + ": ")
+        forecast(codes[index], 30)
+        cont = input("Continue? (y/n)") == "y"
 
 main()
 
