@@ -93,9 +93,10 @@ def lr(x_train, y_train, x_test, y_test, x_forecast):
 def main():
     print("Welcome")
 
-    codes = ["WIKI/AMZN"]
+    codes = ["WIKI/AMZN", "WIKI/GOOGL"]
 
     print("0: Amazon")
+    print("1: Google")
     index = int(input("Please choose a company via number from the above list:" ))
     
     forecast(codes[index], 30)
