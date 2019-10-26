@@ -5,6 +5,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 
+import warnings
+
+warnings.filterwarnings("ignore")
+
 #Reference:
 #https://medium.com/@randerson112358/predict-stock-prices-using-python-machine-learning-53aa024da20a
 
@@ -45,8 +49,16 @@ def forecast(quandl_code, n_days):
 
     #split data into 80% training and 20% testing
     x_train, x_test, y_train, y_test = train_test_split(X,Y, test_size=0.2)
+    
+    #set x_forecast equal to last 30 rows of the OG data set from adj. close column
+    x_forecast = np.array(new_data.drop(['Prediction'], 1))[-forecast_out:]
+    #print(x_forecast)
 
-    ##Support Vector Machine##
+    svm(x_train, y_train, x_test, y_test, x_forecast)
+    lr(x_train, y_train, x_test, y_test, x_forecast)
+
+##Support Vector Machine##
+def svm(x_train, y_train, x_test, y_test, x_forecast):
 
     #create and train Support Vector Machine (Regressor)
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
@@ -57,7 +69,12 @@ def forecast(quandl_code, n_days):
     svm_confidence = svr_rbf.score(x_test, y_test)
     print("svm confidence: ", svm_confidence)
 
-    ##Linear Regression Model##
+    # print support vector regressor model predictions for the next '30' days
+    svm_prediction = svr_rbf.predict(x_forecast)
+    print(svm_prediction)
+    
+##Linear Regression Model##
+def lr(x_train, y_train, x_test, y_test, x_forecast):
 
     #create and train Linear Regression Model
     lr = LinearRegression()
@@ -68,14 +85,6 @@ def forecast(quandl_code, n_days):
     #best possible score is 1.0
     lr_confidence = lr.score(x_test, y_test)
     print("lr  confidence: ", lr_confidence)
-
-    #set x_forecast equal to last 30 rows of the OG data set from adj. close column
-    x_forecast = np.array(new_data.drop(['Prediction'], 1))[-forecast_out:]
-    #print(x_forecast)
-
-    # print support vector regressor model predictions for the next '30' days
-    svm_prediction = svr_rbf.predict(x_forecast)
-    print(svm_prediction)
 
     # print linear regression model predictions for the next '30' days
     lr_prediction = lr.predict(x_forecast)
